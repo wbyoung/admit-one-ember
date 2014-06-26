@@ -40,25 +40,13 @@ App.LoginController = Ember.Controller.extend({
 App.SignupController = Ember.ObjectController.extend({
   actions: {
     signup: function() {
-      // observe token being read by authorizer so that it can be used to
-      // log the user in. the request to create a user will come back with
-      // the proper authorization header which we can then use to immediately
-      // store authorization data.
-      var token = null;
-      this.get('session.authorizer').on('authorization-token', function(value) {
-        token = value;
-      });
-
-      // create the user
+      var session = this.get('session');
       var self = this;
-      this.get('model').save()
+
+      this.get('model').save() // create the user
       .then(function() {
-        if (!token) { throw new Error('missing token'); }
-        self.get('session').set('content', {
-          email: self.get('model.email'),
-          token: token
-        });
-        self.transitionToRoute('dashboard');
+        session.login({ username: this.get('model.username') });
+        this.transitionToRoute('dashboard');
       })
       .catch(function(error) {
         // handle error

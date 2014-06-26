@@ -99,9 +99,22 @@ Ember.Application.initializer({
     App.AuthConfiguration.storage = 'auth-session-storage:test';
   }
 });
-
 ```
 
+To fake login:
+
+```javascript
+Ember.Test.registerHelper('applicationContainer', function(app) {
+  return app.__container__;
+});
+
+var container = applicationContainer();
+var session = container.lookup('auth-session:main');
+session.set('content', {
+  username: 'fak-username',
+  token: 'fake-token'
+});
+```
 
 ## License
 

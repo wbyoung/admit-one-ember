@@ -68,7 +68,7 @@ App.SignupController = Ember.ObjectController.extend({
 });
 ```
 
-## Testing
+### Testing
 
 
 Set up your main `application.js` file like so:
@@ -101,12 +101,20 @@ Ember.Application.initializer({
 });
 ```
 
-To fake login:
+#### Faking Login
+
+Add a test helper:
 
 ```javascript
 Ember.Test.registerHelper('applicationContainer', function(app) {
   return app.__container__;
 });
+```
+
+Then in your tests, you can access the session and set the content to create
+an authenticated:
+
+```javascript
 
 var container = applicationContainer();
 var session = container.lookup('auth-session:main');
@@ -115,6 +123,7 @@ session.set('content', {
   token: 'fake-token'
 });
 ```
+
 
 ## License
 

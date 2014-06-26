@@ -364,6 +364,11 @@ Ember.TinyAuth = {
 var Auth = Ember.TinyAuth;
 var AdmitOne = Ember.AdmitOne = Ember.AdmitOne || {};
 
+// expose everything in tiny-auth to admit-one users. we'll end up overwriting
+// some of the pieces in here, but they'll serve the same purposes, and
+// advanced uses should directly access tiny-auth.
+Ember.$.extend(AdmitOne, Auth);
+
 var extractAuthorizationHeader = function(xhr) {
   var authorization = xhr.getResponseHeader('Authorization');
   var tokenMatch = authorization && authorization.match(/\s*token\s+(.*)\s*/i);

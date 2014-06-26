@@ -144,7 +144,18 @@ Authorizer.Base = Ember.Object.extend({
    * @param {object} requestOptions Request options.
    */
   authorize: function(/*jqXHR, requestOptions*/) {
-  }
+  },
+
+  /**
+   * Authorizers can set this value to support session login without requiring
+   * invoking the authorize method. This can typically be supported by pulling
+   * authorization information out of HTTP response headers when the server's
+   * authentication method provides it in the response. The authorizer will not
+   * have knowledge of which requests are related to login, though.
+   *
+   * @type {object}
+   */
+  capturedAuthorization: undefined,
 });
 
 /**
@@ -220,6 +231,25 @@ var Session = Ember.ObjectProxy.extend({
   },
 
   /**
+   * Login without explicitly invoking the authenticator's `authenticate`
+   * method. In order for this to work, the authorizer needs to support
+   * capturing authorization data as requests are passed back and forth with
+   * the server. This method will throw an exception if the authorizer does not
+   * support capturing authorization data.
+   *
+   * @param {object} data Data to append to the authorization data that will
+   * be stored in the session.
+   */
+  login: function(data) {
+    var authorizer = this.get('authorizer');
+    var captured = authorizer.get('capturedAuthorization');
+    if (!captured) {
+      throw new Error('Authorization information not captured by authorizer.');
+    }
+    this.set('content', Ember.$.extend({}, data, captured));
+  },
+
+  /**
    * Invalidate a session. This will result in the authenticator having an
    * opportunity to process invalidation. Session data will be cleared
    * regardless of whether the resulting promise resolves successfully or
@@ -232,6 +262,7 @@ var Session = Ember.ObjectProxy.extend({
   invalidate: function() {
     var clear = function() {
       this.set('content', {});
+      this.get('authenticator').set('capturedAuthorization', undefined);
       this.get('storage').clear();
     }.bind(this);
     return this.get('authenticator').invalidate(this.get('content'))
@@ -439,6 +470,7 @@ AdmitOne.Authorizer = Auth.Authorizer.Base.extend(Ember.Evented, {
       if (invalidated) { session.invalidate(); }
       else if (token) {
         this.trigger('authorization-token', token);
+        this.set('capturedAuthorization', { token: token });
         session.integrateContent({ token: token });
       }
     }.bind(this));

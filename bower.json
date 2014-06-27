@@ -1,7 +1,7 @@
 {
   "name": "admit-one-ember",
   "main": "dist/admit-one-ember.min.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/wbyoung/admit-one-ember",
   "authors": [
     "Whitney Young"

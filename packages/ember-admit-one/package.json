@@ -1,7 +1,7 @@
 {
   "name": "ember-admit-one",
   "main": "admit-one",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ember extension for Admit One",
   "author": "Whitney Young",
   "license": "MIT"

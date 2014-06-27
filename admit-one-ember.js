@@ -410,8 +410,10 @@ var extractAuthorizationHeader = function(xhr) {
 
 AdmitOne.Authenticator = Auth.Authenticator.Base.extend({
   authenticate: function(credentials) {
+    var settings = this.container.lookup('admit-one-settings:main');
+    var authenticateURL = settings.api.authenticate;
     return new Ember.RSVP.Promise(function(resolve, reject) {
-      Ember.$.ajax('/api/v1/sessions', {
+      Ember.$.ajax(authenticateURL, {
         method: 'post',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify({ session: credentials })
@@ -420,18 +422,19 @@ AdmitOne.Authenticator = Auth.Authenticator.Base.extend({
         function(data, status, xhr) {
           var extracted = extractAuthorizationHeader(xhr);
           var token = extracted[0];
-          resolve({
-            email: data.session.email,
+          resolve(Ember.$.extend({}, data.session, {
             token: token
-          });
+          }));
         },
         function(xhr, status, error) { reject(error); });
     });
   },
 
   invalidate: function(/*data*/) {
+    var settings = this.container.lookup('admit-one-settings:main');
+    var invalidateURL = settings.api.invalidate;
     return new Ember.RSVP.Promise(function(resolve, reject) {
-      Ember.$.ajax('/api/v1/sessions/current', {
+      Ember.$.ajax(invalidateURL, {
         method: 'delete',
         contentType: 'application/json; charset=utf-8'
       })
@@ -486,12 +489,25 @@ AdmitOne.Authorizer = Auth.Authorizer.Base.extend(Ember.Evented, {
  */
 (function() {
 
-Ember.AdmitOne.setup = function(configuraiton) {
-  Ember.$.extend(configuraiton, {
+Ember.AdmitOne.setup = function(options) {
+  var opts = options || {};
+
+  opts.containers = Ember.$.extend(opts.containers || {}, {
     authenticator: 'auth-session-authenticator:admit-one',
     authorizer: 'auth-session-authorizer:admit-one',
     storage: 'auth-session-storage:local'
   });
+
+  if (Ember.typeOf(opts.api) === 'string') {
+    opts.api = { endpoint: opts.api };
+  }
+  opts.api = opts.api || {};
+  opts.api.endpoint = opts.api.endpoint || '/api';
+  opts.api.authenticate = opts.api.authenticate ||
+    opts.api.endpoint + '/sessions';
+  opts.api.invalidate = opts.api.invalidate ||
+    opts.api.endpoint + '/sessions/current';
+
   Ember.Application.initializer({
     name: 'admit-one',
     initialize: function(container, application) {
@@ -500,7 +516,8 @@ Ember.AdmitOne.setup = function(configuraiton) {
       var Authorizer = admit.Authorizer;
       application.register('auth-session-authenticator:admit-one', Authenticator);
       application.register('auth-session-authorizer:admit-one', Authorizer);
-      Ember.TinyAuth.setup(container, application, configuraiton);
+      application.register('admit-one-settings:main', opts, { instantiate: false });
+      Ember.TinyAuth.setup(container, application, opts.containers);
     }
   });
 };

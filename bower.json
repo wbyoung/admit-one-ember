@@ -25,5 +25,8 @@
     "tests",
     "package.json",
     "gulpfile.js"
-  ]
+  ],
+  "dependencies": {
+    "loader.js": "~1.0.0"
+  }
 }

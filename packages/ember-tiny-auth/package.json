@@ -1,0 +1,8 @@
+{
+  "name": "ember-tiny-auth",
+  "main": "tiny-auth",
+  "version": "0.1.0",
+  "description": "Tiny Authentication Adapter for Ember",
+  "author": "Whitney Young",
+  "license": "MIT"
+}

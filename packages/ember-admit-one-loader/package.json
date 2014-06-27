@@ -1,0 +1,8 @@
+{
+  "name": "ember-admit-one-loader",
+  "main": "loader",
+  "version": "0.1.0",
+  "description": "Loader for Ember Admit One",
+  "author": "Whitney Young",
+  "license": "MIT"
+}

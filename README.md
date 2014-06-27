@@ -167,7 +167,7 @@ This extension currently has the following restrictions on customization:
 Pull requests to address these issues are welcome. :)
 
 
-### Testing
+### Usage in Tests
 
 Set up your main `application.js` file like so:
 

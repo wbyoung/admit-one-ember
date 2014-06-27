@@ -387,7 +387,6 @@ Ember.TinyAuth = {
 /**
  * Admit One
  *
- * TODO: make API endpoints customizable
  */
 (function() {
 'use strict';

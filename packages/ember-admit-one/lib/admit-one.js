@@ -1,10 +1,5 @@
 'use strict';
 
-/**
- * Admit One
- *
- */
-
 import Auth from 'ember-tiny-auth';
 import Authenticator from 'ember-admit-one/authenticator';
 import Authorizer from 'ember-admit-one/authorizer';

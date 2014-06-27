@@ -4,12 +4,29 @@ Ember extension for [Admit One][admit-one].
 
 ## Usage
 
+The following code shows example routes, models, and controllers to get you
+started using Admit One with Ember:
+
 ```javascript
 window.App = Ember.Application.create();
 Ember.AdmitOne.setup();
 
 // authenticate any route
 App.ProfileRoute = Ember.Route.extend(Ember.AdmitOne.AuthenticatedRouteMixin, {
+});
+
+App.User = DS.Model.extend({
+  username: attr('string'),
+  password: attr('string')
+});
+
+App.LoginRoute = Ember.Route.extend({
+  beforeModel: function() {
+    this._super();
+    if (this.get('session').get('isAuthenticated')) {
+      this.transitionTo('dashboard');
+    }
+  }
 });
 
 App.LoginController = Ember.Controller.extend({
@@ -37,6 +54,23 @@ App.LoginController = Ember.Controller.extend({
   }
 });
 
+App.LogoutRoute = Ember.Route.extend({
+  beforeModel: function() {
+    this._super();
+    var self = this;
+    var session = this.get('session');
+    return session.invalidate().finally(function() {
+      self.transitionTo('index');
+    });
+  }
+});
+
+App.SignupRoute = Ember.Route.extend({
+  model: function() {
+    return this.store.createRecord('user');
+  }
+});
+
 App.SignupController = Ember.ObjectController.extend({
   actions: {
     signup: function() {
@@ -56,16 +90,92 @@ App.SignupController = Ember.ObjectController.extend({
 });
 ```
 
-### Testing
+The _login_ template:
 
+```handlebars
+<form {{action 'authenticate'}}>
+  {{input type="username" required="true" autofocus="true" value=username}}
+  {{input type="password" required="true" autofocus="true" value=password}}
+  <button type="submit">Log in</button>
+</form>
+```
+
+The _signup_ template:
+
+```handlebars
+<form {{action 'signup'}}>
+  {{input type="username" required="true" autofocus="true" value=username}}
+  {{input type="password" required="true" autofocus="true" value=password}}
+  <button type="submit">Sign up</button>
+</form>
+```
+
+## API
+
+### Ember.AdmitOne.setup([options])
+
+#### options.api
+
+Type: `String|Object`  
+
+If you provide a string, it will be used as the value for
+`options.api.endpoint` rather than specifying the resources used in the API. An
+object can be used, though, and each option is explained below.
+
+#### options.api.endpoint
+
+Type: `String`  
+Default: `'/api'`
+
+Changing this value will affect the values of `options.api.authenticate` and
+`options.api.invalidate` as well.
+
+#### options.api.authenticate
+
+Type: `String`  
+Default: `'/api/sessions'`
+
+The resource to use for authentication. A _POST_ request will be made here to
+authenticate the user.
+
+#### options.api.invalidate
+
+Type: `String`  
+Default: `'/api/sessions/current'`
+
+The resource to use for authentication. A _DELETE_ request will be made here to
+invalidate the user's session.
+
+#### options.containers
+
+Type: `Object`  
+Default: `undefined`
+
+Containers to use to initialize TinyAuth. See testing example below.
+
+----
+
+This extension currently has the following restrictions on customization:
+
+- Authentication will always be a _POST_ request.
+- Authentication will always send a `session` object. You may pass whatever
+  object you'd like to `session.authenticate`, but if, for instance, you are
+  sending an object with `email` and `password`, the request will come through
+  with an object `{ session: { email: '', password: '' } }`.
+- Invalidation will always be a _DELETE_ request.
+
+Pull requests to address these issues are welcome. :)
+
+
+### Testing
 
 Set up your main `application.js` file like so:
 
 ```javsacript
 window.App = Ember.Application.create();
 
-App.AuthConfiguration = {}; // overridable by tests
-Ember.AdmitOne.setup(App.AuthConfiguration);
+App.AdmitOneContainers = {}; // overridable by tests
+Ember.AdmitOne.setup({ containers: App.AdmitOneContainers });
 ```
 
 Then, in a test helper file that is included before your test files, but after
@@ -84,7 +194,7 @@ Ember.Application.initializer({
     });
     application.register('auth-session-storage:ephemeral', Ephemeral);
     application.register('auth-session-storage:test', Ephemeral);
-    App.AuthConfiguration.storage = 'auth-session-storage:test';
+    App.AdmitOneContainers.storage = 'auth-session-storage:test';
   }
 });
 ```

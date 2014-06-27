@@ -27,6 +27,8 @@
     "gulpfile.js"
   ],
   "dependencies": {
+  },
+  "devDependencies": {
     "loader.js": "~1.0.0"
   }
 }

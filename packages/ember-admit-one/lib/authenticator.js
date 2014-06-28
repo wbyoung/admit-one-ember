@@ -21,7 +21,12 @@ var Authenticator = Auth.Authenticator.Base.extend({
             token: token
           }));
         },
-        function(xhr, status, error) { reject(error); });
+        function(xhr, status, error) {
+          var object = error;
+          if (xhr.responseJSON) { object = xhr.responseJSON; }
+          if (object.error) { object = object.error; }
+          reject(object, error);
+        });
     });
   },
 

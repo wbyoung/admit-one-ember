@@ -259,13 +259,16 @@ var Session = Ember.ObjectProxy.extend({
    * underlying authenticator succeeded.
    */
   invalidate: function() {
+    if (this._invalidate) { return this._invalidate; }
     var clear = function() {
       this.set('content', {});
       this.get('authenticator').set('capturedAuthorization', undefined);
       this.get('storage').clear();
+      this._invalidate = undefined;
     }.bind(this);
-    return this.get('authenticator').invalidate(this.get('content'))
-    .then(clear, function(e) { clear(); throw e; });
+    return (this._invalidate = this.get('authenticator')
+      .invalidate(this.get('content'))
+      .then(clear, function(e) { clear(); throw e; }));
   },
 
   /**

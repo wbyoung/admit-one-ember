@@ -89,7 +89,7 @@ App.SignupController = Ember.ObjectController.extend({
       this.get('model').save() // create the user
       .then(function() {
         session.login({ username: this.get('model.username') });
-        this.transitionToRoute('profile');
+        self.transitionToRoute('profile');
       })
       .catch(function(error) {
         // handle error

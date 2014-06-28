@@ -11,27 +11,36 @@ started using Admit One with Ember:
 window.App = Ember.Application.create();
 Ember.AdmitOne.setup();
 
+App.Router.map(function() {
+  this.route('signup');
+  this.route('login');
+  this.route('logout');
+  this.route('profile');
+});
+
+App.ApplicationAdapter = DS.RESTAdapter.extend({
+  namespace: 'api'
+});
+
 // authenticate any route
 App.ProfileRoute = Ember.Route.extend(Ember.AdmitOne.AuthenticatedRouteMixin, {
 });
 
 App.User = DS.Model.extend({
-  username: attr('string'),
-  password: attr('string')
+  username: DS.attr('string'),
+  password: DS.attr('string')
 });
 
 App.LoginRoute = Ember.Route.extend({
   beforeModel: function() {
     this._super();
     if (this.get('session').get('isAuthenticated')) {
-      this.transitionTo('dashboard');
+      this.transitionTo('profile');
     }
   }
 });
 
 App.LoginController = Ember.Controller.extend({
-  needs: ['application'],
-
   actions: {
     authenticate: function() {
       var self = this;
@@ -80,7 +89,7 @@ App.SignupController = Ember.ObjectController.extend({
       this.get('model').save() // create the user
       .then(function() {
         session.login({ username: this.get('model.username') });
-        this.transitionToRoute('dashboard');
+        this.transitionToRoute('profile');
       })
       .catch(function(error) {
         // handle error
@@ -90,12 +99,22 @@ App.SignupController = Ember.ObjectController.extend({
 });
 ```
 
+In any template you can show login/logout links:
+
+```handlebars
+{{#if session.isAuthenticated }}
+  {{#link-to 'logout'}}Logout{{/link-to}}
+{{else}}
+  {{#link-to 'login'}}Login{{/link-to}}
+{{/if}}
+```
+
 The _login_ template:
 
 ```handlebars
-<form {{action 'authenticate'}}>
-  {{input type="username" required="true" autofocus="true" value=username}}
-  {{input type="password" required="true" autofocus="true" value=password}}
+<form {{action 'authenticate' on='submit'}}>
+  {{input type="username" required="true" autofocus="true" placeholder="Username" value=username}}
+  {{input type="password" required="true" autofocus="true" placeholder="Password" value=password}}
   <button type="submit">Log in</button>
 </form>
 ```
@@ -103,9 +122,9 @@ The _login_ template:
 The _signup_ template:
 
 ```handlebars
-<form {{action 'signup'}}>
-  {{input type="username" required="true" autofocus="true" value=username}}
-  {{input type="password" required="true" autofocus="true" value=password}}
+<form {{action 'signup' on='submit'}}>
+  {{input type="username" required="true" autofocus="true" placeholder="Username" value=username}}
+  {{input type="password" required="true" autofocus="true" placeholder="Password" value=password}}
   <button type="submit">Sign up</button>
 </form>
 ```

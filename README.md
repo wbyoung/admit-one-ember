@@ -1,6 +1,6 @@
 # Admit One Ember
 
-Ember extension for [Admit One][admit-one].
+[Admit One][admit-one] adapter for Ember.
 
 ## Usage
 
@@ -180,7 +180,7 @@ Containers to use to initialize TinyAuth. See testing example below.
 
 ----
 
-This extension currently has the following restrictions on customization:
+This adapter currently has the following restrictions on customization:
 
 - Authentication will always be a _POST_ request.
 - Authentication will always send a `session` object. You may pass whatever

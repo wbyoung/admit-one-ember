@@ -6,7 +6,7 @@
   "authors": [
     "Whitney Young"
   ],
-  "description": "Ember extension for Admit One",
+  "description": "Admit One adapter for Ember",
   "keywords": [
     "authentication",
     "authorization",

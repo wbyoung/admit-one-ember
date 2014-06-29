@@ -2,7 +2,7 @@
   "name": "ember-admit-one",
   "main": "admit-one",
   "version": "0.1.4",
-  "description": "Ember extension for Admit One",
+  "description": "Admit One adapter for Ember",
   "author": "Whitney Young",
   "license": "MIT"
 }

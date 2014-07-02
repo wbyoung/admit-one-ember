@@ -107,6 +107,7 @@ In any template you can show login/logout links:
 
 ```handlebars
 {{#if session.isAuthenticated }}
+  {{#link-to 'profile'}}{{ session.username }}{{/link-to}}
   {{#link-to 'logout'}}Logout{{/link-to}}
 {{else}}
   {{#link-to 'login'}}Login{{/link-to}}

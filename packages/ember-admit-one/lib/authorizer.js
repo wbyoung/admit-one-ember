@@ -13,6 +13,7 @@ var Authorizer = Auth.Authorizer.Base.extend(Ember.Evented, {
   authorize: function(jqXHR, options) {
     var session = this.get('session');
     var token = session.get('token');
+    var self = this;
     if (token) {
       options.beforeSend = (function(beforeSend) {
         return function(xhr) {
@@ -30,11 +31,11 @@ var Authorizer = Auth.Authorizer.Base.extend(Ember.Evented, {
       var invalidated = extracted[1];
       if (invalidated) { session.invalidate(); }
       else if (token) {
-        this.trigger('authorization-token', token);
-        this.set('capturedAuthorization', { token: token });
+        self.trigger('authorization-token', token);
+        self.set('capturedAuthorization', { token: token });
         session.integrateContent({ token: token });
       }
-    }.bind(this));
+    });
   }
 
 });

@@ -65,9 +65,10 @@ Storage.Local = Storage.Base.extend({
   clear: function() { localStorage.removeItem('auth-data'); },
 
   _watchStorage: function() {
+    var self = this;
     Ember.$(window).on('storage', function() {
-      this.trigger('change');
-    }.bind(this));
+      self.trigger('change');
+    });
   }
 });
 
@@ -222,11 +223,12 @@ var Session = Ember.ObjectProxy.extend({
    * will match that of what was given by the authenticator.
    */
   authenticate: function(credentials) {
+    var self = this;
     return this.get('authenticator').authenticate(credentials)
     .then(function(data) {
-      this.set('content', data);
+      self.set('content', data);
       return data;
-    }.bind(this));
+    });
   },
 
   /**
@@ -260,12 +262,13 @@ var Session = Ember.ObjectProxy.extend({
    */
   invalidate: function() {
     if (this._invalidate) { return this._invalidate; }
+    var self = this;
     var clear = function() {
-      this.set('content', {});
-      this.get('authenticator').set('capturedAuthorization', undefined);
-      this.get('storage').clear();
-      this._invalidate = undefined;
-    }.bind(this);
+      self.set('content', {});
+      self.get('authenticator').set('capturedAuthorization', undefined);
+      self.get('storage').clear();
+      self._invalidate = undefined;
+    };
     return (this._invalidate = this.get('authenticator')
       .invalidate(this.get('content'))
       .then(clear, function(e) { clear(); throw e; }));
@@ -319,10 +322,11 @@ var Session = Ember.ObjectProxy.extend({
   }.observes('content'),
 
   _installPrefilter: function() {
+    var self = this;
     Ember.$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-      if (this.isDestroyed || options.crossDomain) { return; }
-      this.get('authorizer').authorize(jqXHR, options);
-    }.bind(this));
+      if (self.isDestroyed || options.crossDomain) { return; }
+      self.get('authorizer').authorize(jqXHR, options);
+    });
   }
 });
 

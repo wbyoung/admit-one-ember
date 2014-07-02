@@ -56,6 +56,20 @@ gulp.task('lint', function() {
     .pipe($.jshint.reporter('jshint-stylish'));
 });
 
+gulp.task('test', ['build'], function() {
+  return gulp.src([
+    'bower_components/jquery/dist/jquery.js',
+    'bower_components/handlebars/handlebars.runtime.js',
+    'bower_components/ember/ember.js',
+    'dist/admit-one-ember.js',
+    'test/**/*.js'
+  ])
+  .pipe($.karma({
+    configFile: 'karma.conf.js',
+    action: 'run'
+  }));
+});
+
 gulp.task('clean', function() {
   return gulp.src('dist')
     .pipe($.clean());

@@ -197,7 +197,7 @@ Pull requests to address these issues are welcome. :)
 
 Set up your main `application.js` file like so:
 
-```javsacript
+```javascript
 window.App = Ember.Application.create();
 
 App.AdmitOneContainers = {}; // overridable by tests
@@ -207,7 +207,7 @@ Ember.AdmitOne.setup({ containers: App.AdmitOneContainers });
 Then, in a test helper file that is included before your test files, but after
 `application.js`, you can include the following:
 
-```javsacript
+```javascript
 // use ephemeral store for authentication data
 Ember.Application.initializer({
   name: 'authentication-test',

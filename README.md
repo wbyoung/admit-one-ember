@@ -243,7 +243,7 @@ an authenticated:
 var container = applicationContainer();
 var session = container.lookup('auth-session:main');
 session.set('content', {
-  username: 'fak-username',
+  username: 'fake-username',
   token: 'fake-token'
 });
 ```

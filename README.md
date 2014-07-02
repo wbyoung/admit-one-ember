@@ -1,5 +1,7 @@
 # Admit One Ember
 
+[![Release Version][release-image]][release-url] [![Build status][travis-image]][travis-url] [![Code Climate][codeclimate-image]][codeclimate-url] [![Coverage Status][coverage-image]][coverage-url]
+
 [Admit One][admit-one] adapter for Ember.
 
 ## Usage
@@ -253,5 +255,13 @@ session.set('content', {
 
 This project is distributed under the MIT license.
 
+[travis-url]: http://travis-ci.org/wbyoung/admit-one-ember
+[travis-image]: http://img.shields.io/travis/wbyoung/admit-one-ember.svg
+[release-url]: https://github.com/wbyoung/admit-one-ember/releases
+[release-image]: http://img.shields.io/github/tag/wbyoung/admit-one-ember.svg
+[codeclimate-image]: http://img.shields.io/codeclimate/github/wbyoung/admit-one-ember.svg
+[codeclimate-url]: https://codeclimate.com/github/wbyoung/admit-one-ember
+[coverage-image]: http://img.shields.io/coveralls/wbyoung/admit-one-ember.svg
+[coverage-url]: https://coveralls.io/r/wbyoung/admit-one-ember
 
 [admit-one]: https://github.com/wbyoung/admit-one
